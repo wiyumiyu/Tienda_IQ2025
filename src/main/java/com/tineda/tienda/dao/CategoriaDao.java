@@ -4,7 +4,8 @@
  */
 
 
-import com.tineda.tienda.dao.CategoriaDao;
+package com.tineda.tienda.dao;
+
 import com.tineda.tienda.domain.Categoria;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
