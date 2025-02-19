@@ -6,7 +6,6 @@ package com.tineda.tienda.domain;
 
 import lombok.Data;
 import jakarta.persistence.*;
-import java.util.List;
 import java.io.Serializable;
 
 @Data // Genera automáticamente los getters y setters
