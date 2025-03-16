@@ -7,30 +7,34 @@ package com.tineda.tienda.domain;
 import lombok.Data;
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
-@Data // Genera automáticamente los getters y setters
+@Data //Generar por debajo los set y get
 @Entity
-@Table(name="categoria")
-public class Categoria implements Serializable {
-
+@Table(name = "categoria")
+public class Categoria implements Serializable{
+    
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_Categoria")
-    private Long idCategoria;
-
+    @Column(name = "id_categoria") 
+    private Long idCategoria; // lo interpreta como id_categoria automaticamente
     private String descripcion;
     private String rutaImagen;
     private boolean activo;
-
-    public Categoria() {
+    
+    @OneToMany
+    @JoinColumn(name="idCategoria", insertable=false, updatable=false)
+    private List<Producto> productos;
+    
+    public Categoria(){
     }
-
-    public Categoria(String descripcion, String rutaImagen, boolean activo) {
+    
+    public Categoria(String descripcion, String rutaImagen, boolean activo){
         this.descripcion = descripcion;
-        this.rutaImagen = rutaImagen;
         this.activo = activo;
+        this.rutaImagen = rutaImagen;
     }
-}
 
+}
