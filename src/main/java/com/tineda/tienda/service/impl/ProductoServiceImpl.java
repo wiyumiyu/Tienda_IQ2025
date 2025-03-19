@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ *
+ * @author mariana
+ */
 @Service
 public class ProductoServiceImpl implements ProductoService {
 
@@ -52,6 +56,12 @@ public class ProductoServiceImpl implements ProductoService {
     @Transactional(readOnly = true)
     public List<Producto> findByPrecioBetweenOrderByDescripcion(double precioInf, double precioSup) {
         return productoDao.findByPrecioBetweenOrderByDescripcion(precioInf, precioSup);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<Producto> findByDescripcionContainingOrderByDescripcion(String nombre) {
+        return productoDao.findByDescripcionContainingOrderByDescripcion(nombre);
     }
     
     @Override

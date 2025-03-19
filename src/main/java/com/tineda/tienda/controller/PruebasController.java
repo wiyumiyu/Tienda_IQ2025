@@ -48,6 +48,15 @@ public class PruebasController {
         model.addAttribute("totalProductos", productos.size());
         return "/pruebas/listado2";
     }
+    
+          //Los métodos siguientes son para la prueba de consultas ampliadas
+    @GetMapping("/listado3")
+    public String listado3(Model model) {
+        var productos = productoService.getProductos(false);
+        model.addAttribute("productos", productos);
+        model.addAttribute("totalProductos", productos.size());
+        return "/pruebas/listado3";
+    }
 
     @PostMapping("/query1")
     public String consultaQuery1(@RequestParam(value = "precioInf") double precioInf,
@@ -81,4 +90,14 @@ public class PruebasController {
         model.addAttribute("precioSup", precioSup);
         return "/pruebas/listado2";
     }
+    
+        @PostMapping("/query4")
+    public String consultaQuery4(@RequestParam(value = "descripcion") String nombre, Model model) {
+        var productos = productoService.findByDescripcionContainingOrderByDescripcion(nombre);
+        model.addAttribute("productos", productos);
+        model.addAttribute("totalProductos", productos.size());
+        model.addAttribute("descripcion", nombre);
+        return "/pruebas/listado3";
+    }
+    
 }
