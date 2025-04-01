@@ -1,6 +1,9 @@
 package com.tineda.tienda;
 
 import java.util.Locale;
+import com.tineda.tienda.domain.RequestMatcher;
+import com.tineda.tienda.service.RequestMatcherService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -95,35 +98,63 @@ public class ProjectConfig implements WebMvcConfigurer {
         build.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests((request) -> request
+//                .requestMatchers("/", "/index", "/errores/**", "/error",
+//                        "/carrito/**", "/pruebas/**", "/reportes/**",
+//                        "/registro/**", "/js/**", "/webjars/**")
+//                .permitAll()
+//                .requestMatchers(
+//                        "/producto/nuevo", "/producto/guardar",
+//                        "/producto/modificar/**", "/producto/eliminar/**",
+//                        "/categoria/nuevo", "/categoria/guardar",
+//                        "/categoria/modificar/**", "/categoria/eliminar/**",
+//                        "/usuario/nuevo", "/usuario/guardar",
+//                        "/usuario/modificar/**", "/usuario/eliminar/**",
+//                        "/reportes/**"
+//                ).hasRole("ADMIN")
+//                .requestMatchers(
+//                        "/producto/listado",
+//                        "/categoria/listado",
+//                        "/usuario/listado"
+//                ).hasRole("VENDEDOR")
+//                .requestMatchers("/facturar/carrito")
+//                .hasRole("USER")
+//                )
+//                .formLogin((form) -> form
+//                .loginPage("/login").permitAll())
+//                .logout((logout) -> logout.permitAll());
+//        return http.build();
+//    }
+    @Autowired
+    RequestMatcherService requestMatcherService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // Traer de BD los registros
+        List<RequestMatcher> requestMatchers = requestMatcherService.getAllRequestMatchers();
+
         http
-                .authorizeHttpRequests((request) -> request
-                .requestMatchers("/", "/index", "/errores/**", "/error",
-                        "/carrito/**", "/pruebas/**", "/reportes/**",
-                        "/registro/**", "/js/**", "/webjars/**")
-                .permitAll()
-                .requestMatchers(
-                        "/producto/nuevo", "/producto/guardar",
-                        "/producto/modificar/**", "/producto/eliminar/**",
-                        "/categoria/nuevo", "/categoria/guardar",
-                        "/categoria/modificar/**", "/categoria/eliminar/**",
-                        "/usuario/nuevo", "/usuario/guardar",
-                        "/usuario/modificar/**", "/usuario/eliminar/**",
-                        "/reportes/**"
-                ).hasRole("ADMIN")
-                .requestMatchers(
-                        "/producto/listado",
-                        "/categoria/listado",
-                        "/usuario/listado"
-                ).hasRole("VENDEDOR")
-                .requestMatchers("/facturar/carrito")
-                .hasRole("USER")
-                )
+                .authorizeHttpRequests((request) -> {
+                    request
+                            .requestMatchers("/", "/index", "/errores/**", "/error", "/error/**",
+                                    "/carrito/**", "/pruebas/**", "/reportes/**",
+                                    "/registro/**", "/js/**", "/css/**", "/webjars/**")
+                            .permitAll();
+
+                    for (RequestMatcher matcher : requestMatchers) {
+                        request
+                                .requestMatchers(matcher.getPattern())
+                                .hasRole(matcher.getRoleName());
+                    }
+                })
                 .formLogin((form) -> form
                 .loginPage("/login").permitAll())
                 .logout((logout) -> logout.permitAll());
-        return http.build();
-    }
 
+        return http.build();
+
+    }
 }
